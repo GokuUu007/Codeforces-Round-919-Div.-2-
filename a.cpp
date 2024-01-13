@@ -44,57 +44,29 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 
-vector<int> divisors (int n) {
-    vector<int> div;
-    for (int i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {
-            div.push_back(i);
-            if (i != n / i) {
-                div.push_back(n / i);
-            }
-        }
-    }
-    sort(all(div));
-    return div;
-}
-
 void solve() {
-    int n;
-    cin >> n;
+    int n, k, x;
+    cin >> n >> k >> x;
     vector<int> a(n);
     for (auto &x : a) {
         cin >> x;
     }
 
-    auto work = [&] (int k) ->int {
-        vector<int> p[k];
-        for (int i = 0; i < n; ++i) {
-            p[i % k].push_back(a[i]);
-        }
-        set<int> s;
-        int g = 0;
-        for (int i = 0; i < k; ++i) {
-            sort(all(p[i]));
-            for (int j = 1; j < p[i].size(); ++j) {
-                g = __gcd(g, abs(p[i][j] - p[i][j - 1]));
-            }
-        }
-        g = max(g, 2LL);
-        for (int i = 0; i < k; ++i) {
-            set<int> s;
-            for (auto &x : p[i]) {
-                s.insert(x % g);
-            }
-            if (s.size() > 1) {
-                return 0;
-            }
-        }
-        return 1;
+    sort(all(a), greater<int>());
+
+    a.insert(a.begin(), 0);
+
+    partial_sum(all(a), a.begin());
+
+    auto sum = [&] (int l, int r) {
+        return a[r] - a[l];
     };
 
-    int ans = 0;
-    for (auto &k : divisors(n)) {
-        ans += work(k);
+    int ans = a[n] - 2 * a[x];
+    for (int i = 1; i <= k; ++i) {
+        int remove = sum(i, min(i + x, n));
+        int add = sum(i, n);
+        ans = max(ans, add - 2 * remove);
     }
     cout << ans << endl;
 } 
