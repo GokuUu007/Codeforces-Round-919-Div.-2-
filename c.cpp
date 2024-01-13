@@ -71,25 +71,13 @@ void solve() {
         for (int i = 0; i < n; ++i) {
             p[i % k].push_back(a[i]);
         }
-        set<int> s;
         int g = 0;
         for (int i = 0; i < k; ++i) {
-            sort(all(p[i]));
             for (int j = 1; j < p[i].size(); ++j) {
                 g = __gcd(g, abs(p[i][j] - p[i][j - 1]));
             }
         }
-        g = max(g, 2LL);
-        for (int i = 0; i < k; ++i) {
-            set<int> s;
-            for (auto &x : p[i]) {
-                s.insert(x % g);
-            }
-            if (s.size() > 1) {
-                return 0;
-            }
-        }
-        return 1;
+        return g != 1;
     };
 
     int ans = 0;
