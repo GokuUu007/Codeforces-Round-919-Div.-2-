@@ -27,9 +27,6 @@ void __print(const char *x) {cerr << '\"' << x << '\"';}
 void __print(const string &x) {cerr << '\"' << x << '\"';}
 void __print(bool x) {cerr << (x ? "true" : "false");}
  
-
-template<typename T> void chmin (T &a, T &b) {if (a > b) swap(a, b);}
-template<typename T> void chmax (T &a, T &b) {if (a < b) swap(a, b);}
 template<typename T, typename V>
 void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
 template<typename T>
@@ -44,32 +41,33 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 
+
+const int INF = 1e9;
+
 void solve() {
-    int n, k, x;
-    cin >> n >> k >> x;
-    vector<int> a(n);
-    for (auto &x : a) {
-        cin >> x;
+    int n;
+    cin >> n;
+    int lo = 0, hi = INF;
+    set<int> p;
+    while (n--) {
+        int type, x;
+        cin >> type >> x;
+        if (type == 1) {
+            lo = max(lo, x);
+        } else if (type == 2) {
+            hi = min(hi, x);
+        } else {
+            p.insert(x);
+        }
     }
-
-    sort(all(a), greater<int>());
-
-    a.insert(a.begin(), 0);
-
-    partial_sum(all(a), a.begin());
-
-    auto sum = [&] (int l, int r) {
-        return a[r] - a[l];
-    };
-
-    int ans = a[n] - 2 * a[x];
-    for (int i = 1; i <= k; ++i) {
-        int remove = sum(i, min(i + x, n));
-        int add = sum(i, n);
-        ans = max(ans, add - 2 * remove);
+    int have = hi - lo + 1;
+    for (auto &x : p) {
+        if (x >= lo && x <= hi) {
+            --have;
+        }
     }
-    cout << ans << endl;
-} 
+    cout << max(0LL, have) << endl;
+}
 
 int32_t main() {
     ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
@@ -82,7 +80,6 @@ int32_t main() {
     cin >> t;
     while(t--) {
         solve();
-        // cout << (solve() ? "Yes\n" : "No\n");
     } 
 
     #ifndef ONLINE_JUDGE
